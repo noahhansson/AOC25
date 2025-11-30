@@ -1,0 +1,25 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  DAY: '{{.DAY | default "none"}}'
+
+tasks:
+  init:
+    desc: Copy template and create empty input files
+    cmds:
+      - touch input/{{.DAY}}.txt
+      - touch input/{{.DAY}}-test.txt
+      - cp -n src/aoc25/template.py src/aoc25/{{.DAY}}.py
+      - sed -i 's/changeme/{{.DAY}}/g' src/aoc25/{{.DAY}}.py
+
+  run:
+    desc: Run solution
+    cmds:
+      - python3.15 src/aoc25/{{.DAY}}.py
+
+  test:
+    desc: Run solution with test data
+    cmds:
+      - python3.15 src/aoc25/{{.DAY}}.py -t
