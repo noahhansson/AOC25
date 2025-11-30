@@ -4,6 +4,7 @@ from typing import Callable
 from collections.abc import Iterator
 import argparse
 
+
 def read_input(file_name: str, test: bool = False) -> list[str]:
     """Function for navigating to data folder and reading input.
 

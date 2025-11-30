@@ -17,9 +17,9 @@ tasks:
   run:
     desc: Run solution
     cmds:
-      - python3.15 src/aoc25/{{.DAY}}.py
+      - uv run src/aoc25/{{.DAY}}.py
 
   test:
     desc: Run solution with test data
     cmds:
-      - python3.15 src/aoc25/{{.DAY}}.py -t
+      - uv run src/aoc25/{{.DAY}}.py -t
