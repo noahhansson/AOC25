@@ -16,8 +16,3 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# uv
-uv.lock
-pyproject.toml
-.python-version
