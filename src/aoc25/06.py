@@ -1,7 +1,5 @@
 from utils import read_input, timer, setup_args
-from collections import defaultdict
 from functools import reduce
-import re
 
 args = setup_args()
 
