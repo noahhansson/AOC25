@@ -17,7 +17,7 @@ def parse_input(test: bool = False) -> tuple[list[list[list[str]]], list[str]]:
             if any(buffer):
                 cols.append(buffer)
                 ops.append(op)
-            buffer = [[] for j in range(n_rows - 1)]
+            buffer = [[] for _ in range(n_rows - 1)]
             op = inpt[-1][i]
 
         for j in range(n_rows - 1):
@@ -35,11 +35,11 @@ def get_first_solution(test: bool = False):
     total = 0
     for i in range(len(cols)):
         op = ops[i]
-        terms = [int("".join(x).replace(" ", "")) for x in cols[i]]
+        terms = [int("".join(x)) for x in cols[i]]
         if op == "*":
             total += reduce(lambda x, y: x * y, terms, initial=1)
         elif op == "+":
-            total += reduce(lambda x, y: x + y, terms, initial=0)
+            total += sum(terms)
 
     return total
 
@@ -51,11 +51,11 @@ def get_second_solution(test: bool = False):
     for i in range(len(cols)):
         op = ops[i]
         cols_t = list(map(list, zip(*cols[i])))
-        terms = [int("".join(x).replace(" ", "")) for x in cols_t if not all([c==" " for c in x])]
+        terms = [int("".join(x)) for x in cols_t if not all([c==" " for c in x])]
         if op == "*":
             total += reduce(lambda x, y: x * y, terms, initial=1)
         elif op == "+":
-            total += reduce(lambda x, y: x + y, terms, initial=0)
+            total += sum(terms)
 
     return total
 
