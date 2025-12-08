@@ -2,7 +2,6 @@ from utils import read_input, timer, setup_args
 from dataclasses import dataclass
 from typing import Self
 from functools import reduce
-from typing import Iterable
 
 args = setup_args()
 
@@ -18,10 +17,6 @@ class Point3:
     
     def __repr__(self) -> str:
         return f"({self.x}, {self.y}, {self.z})"
-    
-    def __lt__(self, other: Self) -> bool:
-        return self.x < other.x
-
 
 def parse_input(test: bool = False) -> list[Point3]:
     inpt = read_input("08", test=test)
@@ -30,10 +25,12 @@ def parse_input(test: bool = False) -> list[Point3]:
         junctions.append(Point3(*[int(x) for x in row.split(",")]))
     return junctions
 
+
 @timer
 def get_first_solution(test: bool = False):
     junctions = parse_input(test)
 
+    circuits: list[set[Point3]] = []
     connections: dict[Point3, set[Point3]] = {}
 
     n_iter = 10 if test else 1000
@@ -45,7 +42,7 @@ def get_first_solution(test: bool = False):
 
         for i, j1 in enumerate(junctions):
             for j2 in junctions[i + 1:]:
-                if (j1 < j2 and j2 in connections.get(j1, set())) or (j2 < j1 and j1 in connections.get(j2, set())):
+                if j2 in connections.get(j1, set()):
                     continue
 
                 if ((d := j1.dist(j2)) < shortest):
@@ -54,21 +51,25 @@ def get_first_solution(test: bool = False):
                     shortest_j2 = j2
 
         if shortest_j1 is not None and shortest_j2 is not None:
-            j1_circuit = connections.get(shortest_j1, set())
-            j2_circuit = connections.get(shortest_j2, set())
+            try:
+                circuit = next(filter(
+                    lambda c: ((shortest_j1 in c) or (shortest_j2 in c)),
+                    circuits
+                ))
+            except StopIteration:
+                circuit = set()
+                circuits.append(circuit)
 
-            j1_circuit |= j2_circuit.union({shortest_j2})
-            j2_circuit |= j1_circuit.union({shortest_j1})
+            circuit.add(shortest_j1)
+            circuit.add(shortest_j2)
 
-            connections[shortest_j1] = j1_circuit
-            connections[shortest_j2] = j2_circuit
+            connections[shortest_j1] = circuit
+            connections[shortest_j2] = circuit
             
         else:
             raise RuntimeError()
 
-    all_circuits = set([frozenset(s) for s in connections.values()])
-    print(all_circuits)
-    return reduce(lambda x, y: x*len(y), sorted(all_circuits, key=lambda c: len(c), reverse=True)[:3], initial=1)
+    return reduce(lambda x, y: x*len(y), sorted(circuits, key=lambda c: len(c), reverse=True)[:3], initial=1)
 
 
 @timer
