@@ -5,7 +5,7 @@ args = setup_args()
 
 
 def parse_input(test: bool = False) -> tuple[list[list[list[str]]], list[str]]:
-    inpt = read_input("06", test=test)
+    inpt = read_input("06", test=test, strip=False)
     cols: list[list[list[str]]] = []
     ops: list[str] = []
 
