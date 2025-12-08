@@ -5,7 +5,7 @@ from collections.abc import Iterator
 import argparse
 
 
-def read_input(file_name: str, test: bool = False) -> list[str]:
+def read_input(file_name: str, test: bool = False, strip=True) -> list[str]:
     """Function for navigating to data folder and reading input.
 
     Args:
@@ -20,7 +20,7 @@ def read_input(file_name: str, test: bool = False) -> list[str]:
 
     input_file = os.path.join(os.getcwd(), "input", f"{file_name}.txt")
     with open(input_file, "r") as file:
-        contents = [val for val in file.readlines()]
+        contents = [val.strip() if strip else val for val in file.readlines()]
 
     return contents
 
