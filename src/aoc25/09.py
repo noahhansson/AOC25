@@ -39,6 +39,11 @@ def get_second_solution(test: bool = False):
             hlines.append(((min(x1, x2), max(x1, x2)), y1))
 
     for t1, t2 in combinations(tiles, 2):
+
+        area = (abs(t1[0] - t2[0]) + 1) * (abs(t1[1] - t2[1]) + 1)
+        if area <= max_area:
+            continue
+
         valid = True
 
         xmin, xmax = sorted((t1[0], t2[0]))
@@ -66,10 +71,8 @@ def get_second_solution(test: bool = False):
             
         if not valid:
             continue
-            
-        area = (abs(t1[0] - t2[0]) + 1) * (abs(t1[1] - t2[1]) + 1)
-        if area > max_area:
-            max_area = area
+
+        max_area = area
 
     return max_area
 
