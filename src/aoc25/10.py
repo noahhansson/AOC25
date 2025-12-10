@@ -44,28 +44,25 @@ def get_first_solution(test: bool = False):
         indicator: tuple[int, ...] = machine["indicator"]
         buttons: list[tuple[int, ...]] = machine["buttons"]
 
-        queue: deque[tuple[tuple[int, ...], list[int]]] = deque()
+        queue: deque[tuple[tuple[int, ...], int]] = deque()
         seen: set[tuple[int, ...]] = set()
         
         init_state = tuple(0 for _ in range(len(indicator)))
-        pressed = [0 for _ in range(len(buttons))]
 
-        seen.add(tuple(pressed))
-        queue.append((init_state, pressed))
+        seen.add(init_state)
+        queue.append((init_state, 0))
 
         while queue:
-            state, pressed = queue.popleft()
+            state, n_pressed = queue.popleft()
             if state == indicator:
-                sum_presses += sum(pressed)
+                sum_presses += n_pressed
                 break
-            for i, button in enumerate(buttons):
-                next_pressed = pressed.copy()
-                next_pressed[i] += 1
-                if tuple(next_pressed) not in seen:
-                    state_change = tuple([1 if j in button else 0 for j, _ in enumerate(range(len(state)))])
-                    next_state = tuple_xor(state, state_change)
-                    queue.append((next_state, next_pressed))
-                    seen.add(tuple(next_pressed))
+            for button in buttons:
+                state_change = tuple([1 if j in button else 0 for j, _ in enumerate(range(len(state)))])
+                next_state = tuple_xor(state, state_change)
+                if tuple(next_state) not in seen:
+                    queue.append((next_state, n_pressed + 1))
+                    seen.add(tuple(next_state))
     return sum_presses
 
 
@@ -79,31 +76,28 @@ def get_second_solution(test: bool = False):
         joltage: tuple[int, ...] = machine["joltage"]
         buttons: list[tuple[int, ...]] = machine["buttons"]
 
-        queue: deque[tuple[tuple[int, ...], list[int]]] = deque()
+        queue: deque[tuple[tuple[int, ...], int]] = deque()
         seen: set[tuple[int, ...]] = set()
         
         init_state = tuple(0 for _ in range(len(joltage)))
-        pressed = [0 for _ in range(len(buttons))]
 
-        seen.add(tuple(pressed))
-        queue.append((init_state, pressed))
+        seen.add(init_state)
+        queue.append((init_state, 0))
 
         while queue:
-            state, pressed = queue.popleft()
+            state, n_pressed = queue.popleft()
             if state == joltage:
-                print(state, pressed)
-                sum_presses += sum(pressed)
+                print(state, n_pressed)
+                sum_presses += n_pressed
                 break
-            for i, button in enumerate(buttons):
-                next_pressed = pressed.copy()
-                next_pressed[i] += 1
-                if tuple(next_pressed) not in seen:
-                    state_change = tuple([1 if j in button else 0 for j, _ in enumerate(range(len(state)))])
-                    next_state = tuple_sum(state, state_change)
+            for button in buttons:
+                state_change = tuple([1 if j in button else 0 for j, _ in enumerate(range(len(state)))])
+                next_state = tuple_sum(state, state_change)
+                if next_state not in seen:
                     if any([s > j for s, j in zip(next_state, joltage)]):
                         continue
-                    queue.append((next_state, next_pressed))
-                    seen.add(tuple(next_pressed))
+                    queue.append((next_state, n_pressed + 1))
+                    seen.add(next_state)
     return sum_presses
 
 
