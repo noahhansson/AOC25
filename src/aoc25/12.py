@@ -6,38 +6,43 @@ args = setup_args()
 
 class Present:
     shape: frozenset[tuple[int, int]]
+    rotations: set[Present] | None
 
     def __init__(self, shape: set[tuple[int, int]]):
         self.shape = frozenset(shape)
         self.xmax = max([s[0] for s in self.shape])
         self.ymax = max([s[1] for s in self.shape])
+        self.rotations = None
 
-    def flip_horizontal(self) -> Present:
+    def _flip_horizontal(self) -> Present:
         new_shapes = {(s[0], self.ymax - s[1]) for s in self.shape}
         return Present(new_shapes)
 
-    def flip_vertical(self) -> Present:
+    def _flip_vertical(self) -> Present:
         new_shapes = {(self.xmax - s[0], s[1]) for s in self.shape}
         return Present(new_shapes)
 
-    def rotate_90(self) -> Present:
+    def _rotate_90(self) -> Present:
         new_shapes = set()
         for x, y in self.shape:
             new_shapes.add((-y + self.ymax, x))
         return Present(new_shapes)
 
     def get_all_rotations(self) -> set[Present]:
+        if self.rotations is not None:
+            return self.rotations
         rotations: set[Present] = set()
         for rot in (
             self,
-            self.rotate_90(),
-            self.rotate_90().rotate_90(),
-            self.rotate_90().rotate_90().rotate_90(),
+            self._rotate_90(),
+            self._rotate_90()._rotate_90(),
+            self._rotate_90()._rotate_90()._rotate_90(),
         ):
             rotations.add(rot)
-            rotations.add(rot.flip_horizontal())
-            rotations.add(rot.flip_vertical())
+            rotations.add(rot._flip_horizontal())
+            rotations.add(rot._flip_vertical())
 
+        self.rotations = rotations
         return rotations
 
     def __eq__(self, other):
@@ -76,10 +81,9 @@ class Region:
 
     def can_fit(self, present: Present, p: tuple[int, int]) -> bool:
         present_spots = {(x + p[0], y + p[1]) for (x, y) in present.shape}
-        if present_spots.intersection(self.occupied):
-            return False
-        if any([(x >= self.size[0]) or (y >= self.size[1]) for x, y in present_spots]):
-            return False
+        for x, y in present_spots:
+            if ((x, y) in self.occupied) or (x >= self.size[0]) or (y >= self.size[1]):
+                return False
 
         return True
 
@@ -138,6 +142,8 @@ def solve(
                     for p in presents[i].get_all_rotations():
                         if (next_region := region.fit_present(p, (x, y))) is not None:
                             if solve(next_region, presents, required, next_current):
+                                print("")
+                                print(next_region)
                                 return True
         return False
     return False
@@ -158,7 +164,7 @@ def get_first_solution(test: bool = False):
             s += 1
         else:
             # Never happens in real input, only test
-            # Does not converge in reasonable time
+            # Takes forever to converge
             s += solve(region, presents, required, [0 for _ in range(len(required))])
 
     return s
