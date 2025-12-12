@@ -7,8 +7,9 @@ def parse_input(test: bool = False):
     inpt = read_input("03", test=test)
     return [tuple(int(x) for x in bank) for bank in inpt]
 
+
 def solve(bank: tuple[int, ...], num_to_enable: int) -> int:
-    if num_to_enable==0:
+    if num_to_enable == 0:
         return 0
     max_idx = -1
     max_digit = -1
@@ -19,7 +20,11 @@ def solve(bank: tuple[int, ...], num_to_enable: int) -> int:
         if (battery == 9) or ((i + num_to_enable) >= len(bank)):
             break
 
-    return int((10 ** (num_to_enable - 1)) * bank[max_idx] + solve(bank[max_idx+1:], num_to_enable-1))
+    return int(
+        (10 ** (num_to_enable - 1)) * bank[max_idx]
+        + solve(bank[max_idx + 1 :], num_to_enable - 1)
+    )
+
 
 @timer
 def get_first_solution(test: bool = False):

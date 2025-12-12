@@ -33,13 +33,12 @@ def get_second_solution(test: bool = False):
     hlines = []
 
     for (x1, y1), (x2, y2) in zip(tiles, tiles[1:] + tiles[:1]):
-        if x1==x2:
+        if x1 == x2:
             vlines.append((x1, (min(y1, y2), max(y1, y2))))
-        elif y1==y2:
+        elif y1 == y2:
             hlines.append(((min(x1, x2), max(x1, x2)), y1))
 
     for t1, t2 in combinations(tiles, 2):
-
         area = (abs(t1[0] - t2[0]) + 1) * (abs(t1[1] - t2[1]) + 1)
         if area <= max_area:
             continue
@@ -55,7 +54,7 @@ def get_second_solution(test: bool = False):
                 valid = False
                 break
 
-        # Ray-cast ((xmin, xmax), ymid) and (xmid, (ymin, ymax)) 
+        # Ray-cast ((xmin, xmax), ymid) and (xmid, (ymin, ymax))
         # and check intersections with edges
         xmid = xmin + (xmax - xmin) // 2
         ymid = ymin + (ymax - ymin) // 2
@@ -68,7 +67,7 @@ def get_second_solution(test: bool = False):
             if (x1 < xmid < x2) and (ymin < y < ymax):
                 valid = False
                 break
-            
+
         if not valid:
             continue
 

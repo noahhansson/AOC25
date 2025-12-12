@@ -9,15 +9,17 @@ def parse_input(test: bool = False):
     inpt_parsed = []
     for r1 in inpt[0].split(","):
         inpt_parsed.append(r1.split("-"))
-    
+
     return inpt_parsed
 
+
 def detect_dup_id_p1(p_id: str) -> bool:
-    pattern = p_id[:len(p_id) // 2]
-    next_digits = p_id[len(p_id) // 2:]
+    pattern = p_id[: len(p_id) // 2]
+    next_digits = p_id[len(p_id) // 2 :]
     if pattern == next_digits:
         return True
     return False
+
 
 def detect_dup_id_p2(p_id: str) -> bool:
     for idx in range(1, len(p_id) // 2 + 1):
@@ -46,6 +48,7 @@ def get_first_solution(test: bool = False):
         s += p_id
 
     return s
+
 
 @timer
 def get_second_solution(test: bool = False):

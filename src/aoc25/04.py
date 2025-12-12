@@ -6,7 +6,7 @@ args = setup_args()
 
 def parse_input(test: bool = False):
     inpt = read_input("04", test=test)
-    
+
     rolls: set[tuple[int, int]] = set()
 
     for y, row in enumerate(inpt):
@@ -15,6 +15,7 @@ def parse_input(test: bool = False):
                 rolls.add((x, y))
 
     return rolls
+
 
 def get_adj(p: tuple[int, int]) -> set[tuple[int, int]]:
     adj: set[tuple[int, int]] = set()

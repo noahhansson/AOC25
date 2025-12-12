@@ -5,13 +5,16 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 
+
 @dataclass
 class Machine:
     indicator: tuple[int, ...]
     buttons: list[tuple[int, ...]]
     joltage: tuple[int, ...]
 
+
 args = setup_args()
+
 
 def parse_input(test: bool = False):
     inpt = read_input("10", test=test)
@@ -22,10 +25,15 @@ def parse_input(test: bool = False):
         joltage: tuple[int, ...] = ()
         for x in row.split(" "):
             if x.startswith("["):
-                indicator = tuple(1 if c=="#" else 0 for c in x.strip("[]"))
+                indicator = tuple(1 if c == "#" else 0 for c in x.strip("[]"))
             if x.startswith("("):
                 button_raw = tuple(int(c) for c in x.strip("()").split(","))
-                button = tuple([1 if j in button_raw else 0 for j, _ in enumerate(range(len(indicator)))])
+                button = tuple(
+                    [
+                        1 if j in button_raw else 0
+                        for j, _ in enumerate(range(len(indicator)))
+                    ]
+                )
                 buttons.append(button)
             if x.startswith("{"):
                 joltage = tuple(int(c) for c in x.strip("{}").split(","))
@@ -33,12 +41,14 @@ def parse_input(test: bool = False):
         machines.append(Machine(indicator=indicator, buttons=buttons, joltage=joltage))
     return machines
 
+
 def tuple_xor(t1: tuple[int, ...], t2: tuple[int, ...]) -> tuple[int, ...]:
     assert len(t1) == len(t2)
-    ret:list[int] = []
+    ret: list[int] = []
     for x, y in zip(t1, t2):
         ret.append((x + y) % 2)
     return tuple(ret)
+
 
 @timer
 def get_first_solution(test: bool = False):
@@ -49,7 +59,7 @@ def get_first_solution(test: bool = False):
     for machine in machines:
         queue: deque[tuple[tuple[int, ...], int]] = deque()
         seen: set[tuple[int, ...]] = set()
-        
+
         init_state = tuple(0 for _ in range(len(machine.indicator)))
         seen.add(init_state)
         queue.append((init_state, 0))
@@ -66,6 +76,7 @@ def get_first_solution(test: bool = False):
                     seen.add(tuple(next_state))
     return sum_presses
 
+
 @timer
 def get_second_solution(test: bool = False):
     machines = parse_input(test)
@@ -80,8 +91,12 @@ def get_second_solution(test: bool = False):
         constraint = LinearConstraint(A, lb=joltage_arr, ub=joltage_arr)
         bounds = Bounds(0, np.inf)
         res = milp(
-            c=c, constraints=[constraint], bounds=bounds, integrality=[1]*len(machine.buttons))
-        
+            c=c,
+            constraints=[constraint],
+            bounds=bounds,
+            integrality=[1] * len(machine.buttons),
+        )
+
         sum_presses += round(sum(res.x))
     return sum_presses
 

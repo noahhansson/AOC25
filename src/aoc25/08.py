@@ -7,6 +7,7 @@ from itertools import combinations
 
 args = setup_args()
 
+
 @dataclass(frozen=True, repr=False)
 class Point3:
     x: int
@@ -14,11 +15,14 @@ class Point3:
     z: int
 
     def dist(self, other: Self) -> int:
-        #Skip sqrt since it's monotonic
-        return (self.x - other.x)**2 + (self.y - other.y)**2 + (self.z - other.z)**2
-    
+        # Skip sqrt since it's monotonic
+        return (
+            (self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2
+        )
+
     def __repr__(self) -> str:
         return f"({self.x}, {self.y}, {self.z})"
+
 
 def parse_input(test: bool = False) -> list[Point3]:
     inpt = read_input("08", test=test)
@@ -27,8 +31,13 @@ def parse_input(test: bool = False) -> list[Point3]:
         junctions.append(Point3(*[int(x) for x in row.split(",")]))
     return junctions
 
+
 def calc_distances(junctions: list[Point3]) -> list[tuple[Point3, Point3]]:
-    return sorted([(j1, j2) for j1, j2 in combinations(junctions, 2)], key=lambda x: x[0].dist(x[1]))
+    return sorted(
+        [(j1, j2) for j1, j2 in combinations(junctions, 2)],
+        key=lambda x: x[0].dist(x[1]),
+    )
+
 
 @timer
 def get_first_solution(test: bool = False):
@@ -50,7 +59,12 @@ def get_first_solution(test: bool = False):
             circuits[j] = circuit
 
     unique_circuits = set(frozenset(c) for c in circuits.values())
-    return reduce(lambda x, y: x*len(y), sorted(unique_circuits, key=lambda c: len(c), reverse=True)[:3], initial=1)
+    return reduce(
+        lambda x, y: x * len(y),
+        sorted(unique_circuits, key=lambda c: len(c), reverse=True)[:3],
+        initial=1,
+    )
+
 
 @timer
 def get_second_solution(test: bool = False):
@@ -70,6 +84,7 @@ def get_second_solution(test: bool = False):
 
         if len(junctions) == len(circuit):
             return j1.x * j2.x
+
 
 print(f"P1: {get_first_solution(test=args.test)}")
 print(f"P2: {get_second_solution(test=args.test)}")

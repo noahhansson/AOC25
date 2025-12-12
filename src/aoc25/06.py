@@ -25,7 +25,7 @@ def parse_input(test: bool = False) -> tuple[list[list[list[str]]], list[str]]:
     else:
         cols.append(buffer)
         ops.append(op)
-            
+
     return cols, ops
 
 
@@ -51,7 +51,7 @@ def get_second_solution(test: bool = False):
     for i in range(len(cols)):
         op = ops[i]
         cols_t = list(map(list, zip(*cols[i])))
-        terms = [int("".join(x)) for x in cols_t if not all([c==" " for c in x])]
+        terms = [int("".join(x)) for x in cols_t if not all([c == " " for c in x])]
         if op == "*":
             total += reduce(lambda x, y: x * y, terms, initial=1)
         elif op == "+":
